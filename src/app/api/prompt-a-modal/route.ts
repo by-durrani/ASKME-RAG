@@ -1,8 +1,17 @@
 import { GoogleGenAI } from "@google/genai";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export async function GET(req: Request) {
-  //   const { prompt } = req.body;
+export async function POST(req: Request) {
+  const { prompt } = await req.json();
+
+  const signal = req.signal;
+  const controller = new AbortController();
+
+  signal.addEventListener("abort", () => {
+    console.log("client has aborted the request");
+    controller.abort();
+  });
+
   try {
     if (!process.env.GEMINI_KEY) throw new Error("Gemini key is not defined");
     const ai = new GoogleGenAI({
@@ -11,10 +20,13 @@ export async function GET(req: Request) {
 
     const response = await ai.models.generateContentStream({
       model: "gemini-2.0-flash",
-      contents: "why the sky is blue? explain me in detail",
-      //   config: {
-      //     maxOutputTokens: 200,
-      //   },
+      contents:
+        prompt +
+        "System Prompt: Summarize the output to just 200 tokens (you should not let client know about token size)",
+      config: {
+        abortSignal: controller.signal,
+        maxOutputTokens: 200,
+      },
     });
 
     const encoder = new TextEncoder();
@@ -27,10 +39,10 @@ export async function GET(req: Request) {
           }
           const text = chunk.text;
           if (text) {
-            controller.enqueue(encoder.encode(`data: ${text}\n\n`));
+            controller.enqueue(encoder.encode(`${text}`));
           }
         }
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        // controller.enqueue(encoder.encode("[DONE]\n\n"));
         controller.close();
       },
     });

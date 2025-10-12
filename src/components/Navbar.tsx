@@ -22,7 +22,7 @@ const Navbar = () => {
   const router = useRouter();
   // const user = await currentUser();
   return (
-    <nav className="w-fit rounded-lg font-bold shadow-md bg-card md:p-4 flex flex-col justify-between md:h-full h-fit">
+    <nav className="w-fit rounded-lg font-bold shadow-md bg-card md:p-4 md:flex flex-col fixed  justify-between md:h-full h-fit">
       <Sheet>
         <SheetTrigger asChild className="cursor-pointer">
           <Button type="button" className="text-black ">
@@ -55,7 +55,7 @@ const Navbar = () => {
           <DropdownMenuGroup>
             {/* <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Billing</DropdownMenuItem> */}
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/settings")}>
               <Settings /> Settings
             </DropdownMenuItem>
             <DropdownMenuItem

@@ -26,6 +26,7 @@
     "jwt": "^0.2.0",
     "langchain": "^0.3.35",
     "lucide-react": "^0.545.0",
+    "marked": "^16.4.0",
     "mongoose": "^8.19.1",
     "next": "15.5.4",
     "react": "19.1.0",
