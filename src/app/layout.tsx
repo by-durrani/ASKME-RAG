@@ -36,7 +36,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} md:pr-16! md:pl-4 px-4! md:py-8! py-4! relative h-screen overflow-hidden bg-background dark flex md:flex-row flex-col justify-between`}
+          className={`${geistSans.variable} ${geistMono.variable} md:pr-0! md:pl-4 px-4! md:py-8! py-4! relative h-screen overflow-hidden bg-background dark flex md:flex-row flex-col justify-between`}
         >
           {children}
         </body>
