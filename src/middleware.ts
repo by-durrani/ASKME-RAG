@@ -1,26 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
+import {
+  clerkClient,
+  clerkMiddleware,
+  createRouteMatcher,
+} from "@clerk/nextjs/server";
 
-// export async function middleware(request: NextRequest) {
-//   if (request.nextUrl.pathname === "/")
-//     return NextResponse.redirect(new URL("/auth", request.url));
+const isPublicRoute = createRouteMatcher(["/auth(.*)"]);
+const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
-//   if (request.nextUrl.pathname === "/auth" )
-//     return NextResponse.redirect(new URL("/auth", request.url));
-
-//   return NextResponse.next();
-// }
-
-// export const config = {
-//   matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico).*)"],
-// };
-
-const isPublicRoute = createRouteMatcher(["/auth(.*)", "/api/prompt-a-modal"]);
+export async function getUserRole(userId: string | null) {
+  if (!userId) return null;
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  return user.publicMetadata.role;
+}
 
 export default clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
     await auth.protect();
+  }
+
+  // protect admin routes if user is not admin
+  const userRole = await getUserRole((await auth()).userId);
+  if (isAdminRoute(req) && userRole !== "admin") {
+    return NextResponse.redirect(new URL("/chat", req.url));
   }
 
   if (req.nextUrl.pathname === "/")

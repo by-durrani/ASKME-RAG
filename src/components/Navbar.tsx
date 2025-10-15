@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "./ui/button";
-import { List, LogOut, Settings, User } from "lucide-react";
+import { List, LogOut, Settings, ShieldHalf, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const { signOut, user } = useClerk();
   const router = useRouter();
+  console.log(user);
   // const user = await currentUser();
   return (
     <nav className="w-fit rounded-lg font-bold shadow-md bg-card md:p-4 flex flex-col fixed md:relative  justify-between md:h-full h-fit">
@@ -53,9 +54,19 @@ const Navbar = () => {
           </DropdownMenuItem>
           <Separator orientation="horizontal" className="my-1" />
           <DropdownMenuGroup>
-            {/* <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem> */}
-            <DropdownMenuItem onClick={() => router.push("/settings")}>
+            {user?.publicMetadata?.role ? (
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => router.push("/admin")}
+              >
+                <ShieldHalf />
+                {user?.publicMetadata.role as string}
+              </DropdownMenuItem>
+            ) : null}
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => router.push("/settings")}
+            >
               <Settings /> Settings
             </DropdownMenuItem>
             <DropdownMenuItem
